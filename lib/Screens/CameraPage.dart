@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:capture/Bloc/uploadBloc/upload_bloc_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CameraPage extends StatefulWidget {
@@ -56,7 +55,9 @@ class _CameraPageState extends State<CameraPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (imageFile != null) Image.file(imageFile!),
-          if (imageFile == null)
+          if (imageFile == null &&
+              widget.emotion != "Neutral" &&
+              widget.emotion != "Surprised")
             Image.asset('Assets/Images/${widget.emotion}.jpg', height: 300),
           const SizedBox(height: 20),
 
@@ -116,13 +117,30 @@ class _CameraPageState extends State<CameraPage> {
                       ),
                     ),
                     onPressed: uploadImage,
-                    child: const Text(
-                      "Send to Backend",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    child: BlocBuilder<UploadBlocBloc, UploadBlocState>(
+                      builder: (context, state) {
+                        if (state is UploadLoading) {
+                          return const CircularProgressIndicator(
+                            color: Colors.white,
+                          );
+                        } else
+                          const Text(
+                            "Send to Backend",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        return const Text(
+                          "Send to Backend",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        );
+                      },
                     ),
                   ),
               ],
